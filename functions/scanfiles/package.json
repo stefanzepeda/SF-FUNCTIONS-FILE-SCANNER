@@ -1,0 +1,28 @@
+{
+  "name": "scanfiles-function",
+  "version": "0.0.1",
+  "type": "module",
+  "author": "TODO",
+  "description": "TODO",
+  "license": "UNLICENSED",
+  "main": "index.js",
+  "repository": {
+    "type": "git"
+  },
+  "engines": {
+    "node": "^18.7"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js --config .eslintrc",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "@heroku/sf-fx-runtime-nodejs": "0.12.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "eslint": "^8.22.0",
+    "mocha": "^10.0.0",
+    "sinon": "^14.0.0"
+  }
+}
