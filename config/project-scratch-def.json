@@ -1,7 +1,7 @@
 {
   "orgName": "stefan.zepeda company",
   "edition": "Developer",
-  "features": ["EnableSetPasswordInApi"],
+  "features": ["EnableSetPasswordInApi","Functions"],
   "settings": {
     "lightningExperienceSettings": {
       "enableS1DesktopEnabled": true
