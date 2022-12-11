@@ -5,7 +5,7 @@
       "default": true
     }
   ],
-  "name": "SF-FUNCTIONS-FILE-SCANNER",
+  "name": "SF_FUNCTIONS_FILE_SCANNER",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "55.0"
