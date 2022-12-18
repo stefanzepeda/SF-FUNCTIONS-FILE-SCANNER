@@ -1,6 +1,10 @@
-trigger ContentVersionTrigger on ContentVersion (before insert) {
+trigger ContentVersionTrigger on ContentVersion (after insert) {
     
-    Functions.Function scanFilesFunction = functions.Function.get('SF_FUNCTIONS_FILE_SCANNER.scanfiles');
-    Functions.FunctionInvocation invocation = scanFilesFunction.invoke(JSON.serialize(Trigger.NEW));
-    System.debug(invocation.getResponse());
+    for(ContentVersion cv: Trigger.NEW){
+        if(cv.FileType){
+            System.debug(cv.FileType);
+            ID jobID = System.enqueueJob(new ContentVersionQueueable(cv.Id));
+        }
+    }
+    
 }
