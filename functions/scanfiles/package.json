@@ -17,7 +17,8 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@heroku/sf-fx-runtime-nodejs": "0.12.0"
+    "@heroku/sf-fx-runtime-nodejs": "0.12.0",
+    "pdfjs": "^2.4.7"
   },
   "devDependencies": {
     "chai": "^4.3.4",

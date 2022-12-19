@@ -10,14 +10,17 @@
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
+
+import * as pdfjsLib from 'pdfjs';
+
 export default async function (event, context, logger) {
   logger.info(`Invoking Scanfiles with payload ${JSON.stringify(event.data || {})}`);
 
   //const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
   const query = "SELECT Id, VersionData FROM ContentVersion WHERE Id='"+event.data.contentDocId+"'";
   const results = await context.org.dataApi.query(query);
-
-  logger.info('testing results'+results);
+  let pdf = await pdfjsLib.getDocument(results.binaryFields.versionData.data)
+  logger.info('testing results'+results.binaryFields.versionData.data);
 
   return results;
 }
