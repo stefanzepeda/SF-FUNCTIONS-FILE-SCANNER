@@ -14,10 +14,10 @@ export default async function (event, context, logger) {
   logger.info(`Invoking Scanfiles with payload ${JSON.stringify(event.data || {})}`);
 
   //const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
-  const query = "SELECT Id, Name FROM Account";
+  const query = "SELECT Id, VersionData FROM ContentVersion WHERE Id='"+event.data.contentDocId+"'";
   const results = await context.org.dataApi.query(query);
-  
-  logger.info('testing results');
+
+  logger.info('testing results'+results);
 
   return results;
 }
