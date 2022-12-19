@@ -1,4 +1,4 @@
-public with sharing class ContentVersionQueueable {
+public with sharing class ContentVersionQueueable implements Queueable {
     private String contentDocId;
 
     public ContentVersionQueueable (String recordId){
