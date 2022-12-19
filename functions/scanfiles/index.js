@@ -15,7 +15,7 @@ export default async function (event, context, logger) {
 
   const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
 
-  logger.info(JSON.stringify(results));
+  logger.info('testing results'+JSON.stringify(results));
 
   return results;
 }
