@@ -20,8 +20,8 @@ export default async function (event, context, logger) {
   const query = "SELECT Id, VersionData FROM ContentVersion WHERE Id='"+event.data.contentDocId+"'";
   const results = await context.org.dataApi.query(query);
   const pdf = await pdfjsLib.getDocument(results.records[0].binaryFields.versiondata);
-  const numPages = pdf.numPages;
+  //const numPages = pdf.numPages;
   logger.info('testing number of pages: '+JSON.stringify(results.records[0].binaryFields.versiondata).substring(0,200));
 
-  return numPages;
+  return pdf;
 }
