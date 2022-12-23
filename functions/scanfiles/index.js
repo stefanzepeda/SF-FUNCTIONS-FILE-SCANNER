@@ -12,6 +12,7 @@
  */
 import pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
 import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { SyncRedactor } from "redact-pii";
 
 
 export default async function (event, context, logger) {
@@ -47,6 +48,14 @@ export default async function (event, context, logger) {
   const y = transform[5];
   const width = item.width;
   const height = item.height;
+  
+  const redactor = new SyncRedactor();
+  logger.info(JSON.stringify(item));
+  const redactedText = redactor.redact(item.str);
+  // Hi NAME, Please give me a call at PHONE_NUMBER
+  logger.info(redactedText);
+  
+  logger.info(item.str===redactedText);
 
 
   firstPage.drawRectangle({
