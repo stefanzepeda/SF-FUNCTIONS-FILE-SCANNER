@@ -18,7 +18,9 @@
   },
   "dependencies": {
     "@heroku/sf-fx-runtime-nodejs": "0.12.0",
-    "pdfjs": "^2.4.7"
+    "pdf-lib": "^1.17.1",
+    "pdfjs": "^2.4.7",
+    "pdfjs-dist": "^3.1.81"
   },
   "devDependencies": {
     "chai": "^4.3.4",
