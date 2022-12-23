@@ -11,6 +11,7 @@
  *                 to a given execution of a function.
  */
 import pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
+import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 
 export default async function (event, context, logger) {
@@ -22,7 +23,7 @@ export default async function (event, context, logger) {
   //const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
   const query = "SELECT VersionData FROM ContentVersion WHERE Id='"+event.data.contentDocId+"'";
   const results = await context.org.dataApi.query(query);
-  let binaryFile = results.records[0].binaryFields.versiondata;
+  const binaryFile = results.records[0].binaryFields.versiondata;
   //logger.info('testing buffer content: '+JSON.stringify(binaryFile));
 
   const pdf = await pdfjsLib.getDocument(
@@ -34,13 +35,46 @@ export default async function (event, context, logger) {
   
   let page = await pdf.getPage(1);
   let textContent = await page.getTextContent();
+
+  const pdfDoc = await PDFDocument.load(binaryFile)
+
+  const pages = pdfDoc.getPages()
+  const firstPage = pages[0]
+
+  const item = textContent.items[0];
+  const transform = item.transform;
+  const x = transform[4];
+  const y = transform[5];
+  const width = item.width;
+  const height = item.height;
+
+
+  firstPage.drawRectangle({
+    x: x,
+    y: y,
+    width: width,
+    height: height,
+    borderColor: rgb(1, 0, 0),
+    borderWidth: 1.5,
+  })
+
   //let metadata = await pdf.getMetadata();
   //let textPage = await pdf.getData();
   //const readableStream = page.streamTextContent();
   //const reader = readableStream.getReader();
+  const pdfBase64 = await pdfDoc.saveAsBase64()
 
+  return await context.org.dataApi.create({
+    type: "ContentVersion",
+    fields: {
+      Title: `test-pdf-test`,
+      PathOnClient: `test-pdf-test.pdf`,
+      Description: `Test PDF`,
+      VersionData: pdfBase64,
+    }
+  });
 
-  logger.info('testing text in pages: '+JSON.stringify(textContent));
+  //logger.info('testing text in pages: '+JSON.stringify(textContent));
 
   /*let textPages = Array(numPages).fill(0).reduce(async (acc,cv,index) => {
     
@@ -49,5 +83,5 @@ export default async function (event, context, logger) {
 
   //logger.info('testing text in pages: '+textPages);
 
-  return numPages;
+  //return numPages;
 }
