@@ -25,47 +25,52 @@ export default async function (event, context, logger) {
   const query = "SELECT VersionData FROM ContentVersion WHERE Id='"+event.data.contentDocId+"'";
   const results = await context.org.dataApi.query(query);
   const binaryFile = results.records[0].binaryFields.versiondata;
-  //logger.info('testing buffer content: '+JSON.stringify(binaryFile));
 
   const pdf = await pdfjsLib.getDocument(
     binaryFile
-  ).promise;
-  //const pdf = await PDFJSLib.getDocument(binaryFile);
-  const numPages = pdf.numPages;
-  logger.info('testing number of pages: '+numPages);
-  
-  let page = await pdf.getPage(1);
-  let textContent = await page.getTextContent();
+  ).promise; //load readable PDF to extract text
 
-  const pdfDoc = await PDFDocument.load(binaryFile)
-
+  const pdfDoc = await PDFDocument.load(binaryFile) //load writeable PDF
   const pages = pdfDoc.getPages()
-  const firstPage = pages[0]
 
-  const item = textContent.items[0];
-  const transform = item.transform;
-  const x = transform[4];
-  const y = transform[5];
-  const width = item.width;
-  const height = item.height;
-  
-  const redactor = new SyncRedactor();
-  logger.info(JSON.stringify(item));
-  const redactedText = redactor.redact(item.str);
-  // Hi NAME, Please give me a call at PHONE_NUMBER
-  logger.info(redactedText);
-  
-  logger.info(item.str===redactedText);
+  const numPages = pdf.numPages;
+
+  logger.info('Number of pages to process: '+numPages);
+
+  let pagePromises = Array(numPages).fill(0)
+    .map(async (page,index) => pdf.getPage(index+1))
+    
+  let pageProxy = await Promise.all(pagePromises)
+
+  let textPromise = pageProxy.map((page) => page.getTextContent());
+  let textProxy = await Promise.all(textPromise);
+  let textContent = textProxy
+      .reduce((acc,pageContent,pageIndex) => {
+        pageContent.items.forEach((item)=> item.page = pageIndex)
+        return acc.concat(pageContent.items)
+      },[] )
+      .forEach((snippet,index)=>{
+        const transform = snippet.transform;
+        const x = transform[4];
+        const y = transform[5];
+        const width = snippet.width;
+        const height = snippet.height;
+        const redactor = new SyncRedactor();
+        const redactedText = redactor.redact(snippet.str);
+        let isRedacted = snippet.str!==redactedText;
+        if(!isRedacted) return;
+        pages[snippet.page].drawRectangle({
+          x: x,
+          y: y,
+          width: width,
+          height: height,
+          borderColor: rgb(0, 0, 0),
+          borderWidth: 1.5,
+          color: rgb(0,0,0),
+        })
+      })
 
 
-  firstPage.drawRectangle({
-    x: x,
-    y: y,
-    width: width,
-    height: height,
-    borderColor: rgb(1, 0, 0),
-    borderWidth: 1.5,
-  })
 
   //let metadata = await pdf.getMetadata();
   //let textPage = await pdf.getData();
