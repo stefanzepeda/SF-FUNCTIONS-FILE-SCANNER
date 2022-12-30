@@ -22,9 +22,10 @@ export default async function (event, context, logger) {
   logger.info(`Invoking Scanfiles with payload ${JSON.stringify(event.data || {})}`);
 
   //const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
-  const query = "SELECT VersionData FROM ContentVersion WHERE Id='"+event.data.contentDocId+"'";
+  const query = "SELECT ContentDocumentId,VersionData FROM ContentVersion WHERE Id='"+event.data.contentDocId+"'";
   const results = await context.org.dataApi.query(query);
   const binaryFile = results.records[0].binaryFields.versiondata;
+  const docId = results.records[0].fields.contentDocumentId;
 
   const pdf = await pdfjsLib.getDocument(
     binaryFile
@@ -81,9 +82,9 @@ export default async function (event, context, logger) {
   return await context.org.dataApi.create({
     type: "ContentVersion",
     fields: {
-      Title: `test-pdf-test`,
-      PathOnClient: `test-pdf-test.pdf`,
-      Description: `Test PDF`,
+      ContentDocumentId : docId,
+      PathOnClient: `redacted-pdf.pdf`,
+      ReasonForChange: 'Redacted PDF',
       VersionData: pdfBase64,
     }
   });
