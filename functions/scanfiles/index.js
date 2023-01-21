@@ -65,7 +65,7 @@ export default async function (event, context, logger) {
         const redactedText = redactor.redact(snippet.str);
         let isRedacted = snippet.str!==redactedText;
         if(!isRedacted) return acc;
-
+        console.log(redactedText);
         
         const rectanglePlots = snippet.str
           .split(' ')
@@ -78,7 +78,7 @@ export default async function (event, context, logger) {
             return {
               x: x+(letterSize*calcStartPos(snippet.str,item.location)),
               y: y,
-              width: letterSize*item.redactedWord.length,
+              width: (letterSize*item.redactedWord.length)+10,//added 10 padding for font sizes
               height: height,
               borderColor: rgb(0, 0, 0),
               borderWidth: 1.5,
