@@ -45,12 +45,18 @@ export default async function (event, context, logger) {
 
   let textPromise = pageProxy.map((page) => page.getTextContent());
   let textProxy = await Promise.all(textPromise);
+  let calcStartPos = (sentence,location) => {
+    let letterSize = sentence.split(' ')
+                              .filter((word,index)=>index<location)
+                              .reduce((totalSize,word)=>totalSize+word.length,0)
+    return letterSize+location //add location to account for number of spaces
+  };
   let textContent = textProxy
       .reduce((acc,pageContent,pageIndex) => {
         pageContent.items.forEach((item)=> item.page = pageIndex)
         return acc.concat(pageContent.items)
       },[] )
-      .forEach((snippet,index)=>{
+      .reduce((acc,snippet)=>{
         const transform = snippet.transform;
         const x = transform[4];
         const y = transform[5];
@@ -59,8 +65,37 @@ export default async function (event, context, logger) {
         const redactor = new SyncRedactor();
         const redactedText = redactor.redact(snippet.str);
         let isRedacted = snippet.str!==redactedText;
-        if(!isRedacted) return;
-        pages[snippet.page].drawRectangle({
+        if(!isRedacted) return acc;
+
+        
+        const rectanglePlots = snippet.str
+          .split(' ')
+          .reduce((list,word,index) => redactedText.split(' ').indexOf(word)==-1?
+                                            list.concat([{redactedWord:word,location:index}]):
+                                            list
+          ,[])
+          .map(item => {
+            const letterSize = width/snippet.str.length;
+            return {
+              x: x+(letterSize*calcStartPos(snippet.str,item.location)),
+              y: y,
+              width: letterSize*item.redactedWord.length,
+              height: height,
+              borderColor: rgb(0, 0, 0),
+              borderWidth: 1.5,
+              color: rgb(0,0,0),
+              page: snippet.page,
+            }
+          })
+        
+        
+        console.log(acc); 
+        return acc.concat(rectanglePlots);
+      },[])
+  let plotResults = textContent.map(item => pages[item.page].drawRectangle(item))
+    
+
+/*pages[snippet.page].drawRectangle({
           x: x,
           y: y,
           width: width,
@@ -68,10 +103,7 @@ export default async function (event, context, logger) {
           borderColor: rgb(0, 0, 0),
           borderWidth: 1.5,
           color: rgb(0,0,0),
-        })
-      })
-
-
+        })*/
 
   //let metadata = await pdf.getMetadata();
   //let textPage = await pdf.getData();
