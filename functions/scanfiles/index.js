@@ -21,7 +21,6 @@ export default async function (event, context, logger) {
 
   logger.info(`Invoking Scanfiles with payload ${JSON.stringify(event.data || {})}`);
 
-  //const results = await context.org.dataApi.query('SELECT Id, Name FROM Account');
   const query = "SELECT ContentDocumentId,VersionData FROM ContentVersion WHERE Id='"+event.data.contentDocId+"'";
   const results = await context.org.dataApi.query(query);
   const binaryFile = results.records[0].binaryFields.versiondata;
@@ -95,20 +94,6 @@ export default async function (event, context, logger) {
   let plotResults = textContent.map(item => pages[item.page].drawRectangle(item))
     
 
-/*pages[snippet.page].drawRectangle({
-          x: x,
-          y: y,
-          width: width,
-          height: height,
-          borderColor: rgb(0, 0, 0),
-          borderWidth: 1.5,
-          color: rgb(0,0,0),
-        })*/
-
-  //let metadata = await pdf.getMetadata();
-  //let textPage = await pdf.getData();
-  //const readableStream = page.streamTextContent();
-  //const reader = readableStream.getReader();
   const pdfBase64 = await pdfDoc.saveAsBase64()
 
   return await context.org.dataApi.create({
@@ -121,14 +106,4 @@ export default async function (event, context, logger) {
     }
   });
 
-  //logger.info('testing text in pages: '+JSON.stringify(textContent));
-
-  /*let textPages = Array(numPages).fill(0).reduce(async (acc,cv,index) => {
-    
-    return acc.push(textContent.items);
-  },[])*/
-
-  //logger.info('testing text in pages: '+textPages);
-
-  //return numPages;
 }
