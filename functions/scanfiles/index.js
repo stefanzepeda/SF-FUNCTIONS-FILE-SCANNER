@@ -23,7 +23,7 @@ export default async function (event, context, logger) {
   logger.info(`Invoking Scanfiles with payload ${JSON.stringify(event.data || {})}`);
 
   //const query = "SELECT ContentDocumentId,VersionData FROM ContentVersion WHERE Id='"+event.data.contentDocId+"'";
-  let  requestUrl= context.org.baseUrl+'/services/data/v55.0/sobjects/ContentVersion/068DE000002EekMYAS/VersionData';
+  let  requestUrl= `${context.org.baseUrl}/services/data/v55.0/sobjects/ContentVersion/${event.data.contentVersionId}/VersionData`;
   console.log(requestUrl);
   console.log(context.org.dataApi.accessToken);
   const bodyRaw = await axios.get(requestUrl,
@@ -36,7 +36,7 @@ export default async function (event, context, logger) {
                         );
 
   const binaryFile = bodyRaw.data;
-  const docId = '069DE000002AYXiYAO';
+  const docId = event.data.contentDocumentId;
 
   const pdf = await pdfjsLib.getDocument(
     binaryFile
