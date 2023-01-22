@@ -1,25 +1,21 @@
 public with sharing class ContentVersionQueueable implements Queueable {
-    private String contentDocId;
+    private List<ContentVersion> ContentVersions;
 
-    public ContentVersionQueueable (String recordId){
-        this.contentDocId=recordId;
+    public ContentVersionQueueable (List<ContentVersion> versions){
+        this.ContentVersions=versions;
     }
 
     public void execute(QueueableContext context) {
 
-        
-
-        Long startTime = DateTime.now().getTime();
-        
-        String Jsonpayload = '{"contentDocId": "'+contentDocId+'"}';
-
-        Functions.Function scanFilesFunction = functions.Function.get('SF_FUNCTIONS_FILE_SCANNER.scanfiles');
-        Functions.FunctionInvocation invocation = scanFilesFunction.invoke(Jsonpayload);
-        String jsonResponse = invocation.getResponse();
-        Long endTime = DateTime.now().getTime();
-        Long milliseconds = endTime - startTime;
-
-        System.debug(jsonResponse);
-        
+        for(ContentVersion cv: ContentVersions){
+            Long startTime = DateTime.now().getTime();
+            String Jsonpayload = '{"contentVersionId": "'+cv.Id+'","contentDocumentId":"'+cv.ContentDocumentId+'"}';
+            Functions.Function scanFilesFunction = functions.Function.get('SF_FUNCTIONS_FILE_SCANNER.scanfiles');
+            Functions.FunctionInvocation invocation = scanFilesFunction.invoke(Jsonpayload);
+            String jsonResponse = invocation.getResponse();
+            Long endTime = DateTime.now().getTime();
+            Long milliseconds = endTime - startTime;
+            System.debug(jsonResponse);
+        }
     }
 }
