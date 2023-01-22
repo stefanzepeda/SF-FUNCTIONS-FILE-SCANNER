@@ -6,9 +6,9 @@ trigger ContentVersionTrigger on ContentVersion (after insert) {
             
             ContentDocumentLink cdl = new ContentDocumentLink();
             cdl.ContentDocumentId = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id =: cv.Id].ContentDocumentId;
-            List<ContentDocumentLink> existingList = [SELECT Id FROM ContentDocumentLink WHERE ContentDocumentId=:cdl.ContentDocumentId AND LinkedEntityId = '0058G000002IOs2QAG'];
+            List<ContentDocumentLink> existingList = [SELECT Id FROM ContentDocumentLink WHERE ContentDocumentId=:cdl.ContentDocumentId AND LinkedEntityId = '005DE00000HDOzPYAX'];
             if(existingList.size()>0) break;
-            cdl.LinkedEntityId = '0058G000002IOs2QAG';
+            cdl.LinkedEntityId = '005DE00000HDOzPYAX';
             cdl.ShareType = 'C';
             insert cdl;
             ID jobID = System.enqueueJob(new ContentVersionQueueable(cv.Id));

@@ -13,6 +13,7 @@
 import pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
 import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { SyncRedactor } from "redact-pii";
+import axios from "axios";
 
 
 export default async function (event, context, logger) {
@@ -21,10 +22,21 @@ export default async function (event, context, logger) {
 
   logger.info(`Invoking Scanfiles with payload ${JSON.stringify(event.data || {})}`);
 
-  const query = "SELECT ContentDocumentId,VersionData FROM ContentVersion WHERE Id='"+event.data.contentDocId+"'";
-  const results = await context.org.dataApi.query(query);
-  const binaryFile = results.records[0].binaryFields.versiondata;
-  const docId = results.records[0].fields.contentDocumentId;
+  //const query = "SELECT ContentDocumentId,VersionData FROM ContentVersion WHERE Id='"+event.data.contentDocId+"'";
+  let  requestUrl= context.org.baseUrl+'/services/data/v55.0/sobjects/ContentVersion/068DE000002EekMYAS/VersionData';
+  console.log(requestUrl);
+  console.log(context.org.dataApi.accessToken);
+  const bodyRaw = await axios.get(requestUrl,
+                        {
+                          headers: {
+                                  Authorization: 'Bearer ' + context.org.dataApi.accessToken,
+                          },
+                          responseType: 'arraybuffer',
+                        },
+                        );
+
+  const binaryFile = bodyRaw.data;
+  const docId = '069DE000002AYXiYAO';
 
   const pdf = await pdfjsLib.getDocument(
     binaryFile
