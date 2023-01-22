@@ -13,15 +13,12 @@
     "node": "^18.7"
   },
   "scripts": {
-    "postinstall": "patch-package",
-    "heroku-cleanup": "npx patch-package",
     "lint": "eslint . --ext .js --config .eslintrc",
     "test": "mocha"
   },
   "dependencies": {
     "@heroku/sf-fx-runtime-nodejs": "^0.14.2",
     "axios": "^1.2.3",
-    "patch-package": "^6.5.1",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^3.1.81",
     "redact-pii": "^3.4.0"
