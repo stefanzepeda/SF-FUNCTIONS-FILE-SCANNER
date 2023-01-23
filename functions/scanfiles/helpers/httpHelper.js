@@ -1,11 +1,9 @@
 import axios from "axios";
 
-/**
- * Test whether a given URL is retrievable.
- */
+
 export async function getPDFBinary(event, context) {
-    let requestUrl = this.getObjectURL(context.org.baseURL,'ContentVersion',event.data.contentVersionId,'VersionData');
-    console.log(requestUrl);
+    let requestUrl = this.getObjectURL(context.org.baseUrl,'ContentVersion',event.data.contentVersionId,'VersionData');
+
     const bodyRaw = await axios.get(requestUrl, {
         headers: {
             Authorization: 'Bearer ' + context.org.dataApi.accessToken,
@@ -15,6 +13,18 @@ export async function getPDFBinary(event, context) {
     return bodyRaw.data;
 }
 
-export async function getObjectURL(baseURL,objectName,fieldName) {
-  return `${baseURL}/services/data/v55.0/sobjects/${objectName}/${objectId}/${fieldName}`;
+export function getObjectURL(baseURL,objectName,recordId,fieldName) {
+  return `${baseURL}/services/data/v55.0/sobjects/${objectName}/${recordId}/${fieldName}`;
+}
+
+export async function savePDF(context,docId,pdfBase64){
+  return context.org.dataApi.create({
+    type: "ContentVersion",
+    fields: {
+        ContentDocumentId: docId,
+        PathOnClient: `redacted-pdf.pdf`,
+        ReasonForChange: 'Redacted PDF',
+        VersionData: pdfBase64,
+    }
+  });
 }
