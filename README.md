@@ -1,18 +1,22 @@
-# Salesforce DX Project: Next Steps
+# PDF Scanner with Salesforce Functions
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+We can't control what our users attach to our Salesforce environment as we strive to keep an open collaboration environment, we should also strive for maximum security. This project explores an option of redacting PII information from PDFs using Salesforce serverless technology known as Salesforce Functions.
 
-## How Do You Plan to Deploy Your Changes?
+## Set up your environment
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+To deploy this project you will need a Salesforce DevHub with Functions enabled. You can get this by purchasing Salesforce Functions or requesting a trial from your account executive.
 
 ## Configure Your Salesforce DX Project
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+Clone this Github Repository locally and use Visual Studio Code
 
-## Read All About It
+## Start up functions
+High level steps are:
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+1. Login to the functions runtime
+2. Create a compute environment
+3. Deploy the function code to the compute environment
+4. Open the default org and navigate to the Files tab
+5. Attach a PDF file with PII information
+6. Wait a few seconds and verify that the file has been overriden by the function.
+
